@@ -9,13 +9,15 @@ export class Repository<T> implements IRepository<T> {
     this.db = db;
   }
 
-  open = async (resolve: () => void, reject: (arg0: Error) => void): Promise<void> => {
-    this.db.open({ createIfMissing: true, errorIfExists: false }, (err: Error | undefined) => {
-      if (err) {
-        console.error("BaseProvider.constructor.db.open.error", err);
-        reject(err);
-      }
-      resolve();
+  open = async (): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      this.db.open({ createIfMissing: true, errorIfExists: false }, (err) => {
+        if (err) {
+          console.error("BaseProvider.constructor.db.open.error", err);
+          reject(err);
+        }
+        resolve();
+      });
     });
   };
 
