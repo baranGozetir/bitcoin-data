@@ -9,6 +9,16 @@ export class Repository<T> implements IRepository<T> {
     this.db = db;
   }
 
+  open = async (resolve: () => void, reject: (arg0: Error) => void): Promise<void> => {
+    this.db.open({ createIfMissing: true, errorIfExists: false }, (err: Error | undefined) => {
+      if (err) {
+        console.error("BaseProvider.constructor.db.open.error", err);
+        reject(err);
+      }
+      resolve();
+    });
+  };
+
   get = async (key: string): Promise<T | undefined> => {
     return new Promise<T | undefined>((resolve, reject) => {
       this.db.get(key, { sync: true }, (err: Error | undefined, val: rocksdb.Bytes) => {
