@@ -1,6 +1,6 @@
 import RocksDB from "rocksdb";
 import rocksdb from "rocksdb";
-import { IRepository } from "./Interface/IRepository";
+import { IRepository } from "./IRepository";
 
 export class Repository<T> implements IRepository<T> {
   private db: rocksdb;
