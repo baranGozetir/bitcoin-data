@@ -1,10 +1,10 @@
 import axios from "axios";
 import RocksDB from "rocksdb";
-import { Block } from "../Entity/Block";
+import { BlockDto } from "../DTO/BlockDto";
 import { BlockRepository } from "../Repository/BlockRepository";
 import { IBusiness } from "./IBusiness";
 
-export class BlockBusiness implements IBusiness<Block> {
+export class BlockBusiness implements IBusiness<BlockDto> {
   result = new BlockRepository();
 
   constructor() {
