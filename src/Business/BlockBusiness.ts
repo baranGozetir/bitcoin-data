@@ -7,6 +7,10 @@ import { IBusiness } from "./IBusiness";
 export class BlockBusiness implements IBusiness<Block> {
   result = new BlockRepository();
 
+  constructor() {
+    this.open();
+  }
+
   open = async () => await this.result.open();
 
   put = async () => {
