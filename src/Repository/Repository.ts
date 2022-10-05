@@ -48,7 +48,7 @@ export class Repository<T> implements IRepository<T> {
     });
   };
 
-  del = async (key: string): Promise<string> => {
+  delete = async (key: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
       this.db.del(key, (err: Error | undefined) => {
         if (err) {
