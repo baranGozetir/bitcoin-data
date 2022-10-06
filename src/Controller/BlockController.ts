@@ -9,4 +9,9 @@ app.get("/getMany", async (req: any, res: any) => {
   res.status(200).send(result);
 });
 
+app.get("/put", async (req: any, res: any) => {
+  const result = await data.put();
+  res.status(201).send(result);
+});
+
 app.listen(3000, () => console.log(`Example app listening on port 3000!`));

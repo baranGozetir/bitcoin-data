@@ -22,7 +22,7 @@ export class BlockBusiness implements IBusiness<BlockDto> {
       for (let i = initialBlockHeight; i <= 3; i++) {
         const blockHeight = await axios.get(`https://blockstream.info/testnet/api/block-height/${i}`);
 
-        return await this.result.put(blockHeight.data, blockHeight.data);
+        await this.result.put(blockHeight.data, blockHeight.data);
       }
     }
   };
