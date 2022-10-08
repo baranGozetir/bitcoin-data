@@ -9,5 +9,8 @@ export type BlockDto = {
   merkle_root: string;
   previousblockhash: string | null;
   mediantime: number;
+  nonce: number;
+  bits: number;
+  difficulty: number;
   ext: any;
 };
