@@ -1,33 +1,34 @@
 import axios from "axios";
-import RocksDB from "rocksdb";
 import { BlockDto } from "../DTO/BlockDto";
-import { BlockRepository } from "../Repository/BlockRepository";
+import { BlockRepository } from "../Repository/Block/BlockRepository";
 import { IBusiness } from "./IBusiness";
 
 export class BlockBusiness implements IBusiness<BlockDto> {
-  result = new BlockRepository();
+  result = new BlockRepository("block2");
 
   constructor() {
-    this.open();
+    this.createIndice();
   }
 
-  open = async () => await this.result.open();
+  createIndice = async (): Promise<any> => await this.result.createIndice();
 
-  put = async () => {
-      let blokhash= [];
-      for(let i = 0; i<5; i++){
-        //for (let i = initialBlockHeight; i < lastBlockHeight.data.length; i++)
-        const blockHash = await axios.get('https://blockstream.info/testnet/api/block-height/'+i)
-        blokhash.push(blockHash.data)
-        const blockInfo = await axios.get('https://blockstream.info/testnet/api/block/'+blokhash[i])
-        await this.result.put(blockInfo.data.height, blockInfo.data); 
-      }}
+  postDocument = async (): Promise<any> => {
+    let blokHashArray = [];
 
-  get = async (key: string) => this.result.get(key);
+    for (let i = 0; i < 5; i++) {
+      //for (let i = initialBlockHeight; i < lastBlockHeight.data.length; i++)
+      const blockHash = await axios.get("https://blockstream.info/testnet/api/block-height/" + i);
+      blokHashArray.push(blockHash.data);
+      const blockInfo = await axios.get("https://blockstream.info/testnet/api/block/" + blokHashArray[i]);
+      await this.result.postDocument(blockInfo.data);
+    }
+  };
 
-  getMany = async (options?: RocksDB.IteratorOptions) => await this.result.getMany(options);
+  deleteDocument = async (id: string): Promise<any> => await this.result.deleteDocument(id);
 
-  delete = async (key: string) => this.result.delete(key);
+  getAllDocuments = async (): Promise<any> => await this.result.getAllDocuments();
 
-  deleteAll = async () => this.result.deleteAll();
+  getDocumentByBlockHeight = async (param: string): Promise<any> => await this.result.getDocumentByBlockHeight(param);
+
+  getDocumentsByTxCount = async (): Promise<any> => await this.result.getDocumentsByTxCount();
 }
