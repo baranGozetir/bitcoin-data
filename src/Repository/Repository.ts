@@ -1,133 +1,36 @@
-import RocksDB from "rocksdb";
-import rocksdb from "rocksdb";
+import elasticClient from "../elasticSearch/elastic-client";
 import { IRepository } from "./IRepository";
 
 export class Repository<T> implements IRepository<T> {
-  private db: rocksdb;
+  private tableName: string;
 
-  constructor(db: rocksdb) {
-    this.db = db;
+  constructor(tableName: string) {
+    this.tableName = tableName;
+    this.createIndice();
   }
 
-  open = async (): Promise<void> => {
-    return new Promise<void>((resolve, reject) => {
-      this.db.open({ createIfMissing: true, errorIfExists: false }, (err) => {
-        if (err) {
-          console.error("BaseProvider.constructor.db.open.error", err);
-          reject(err);
-        }
-        resolve();
-      });
+  createIndice = async (): Promise<any> => {
+    await elasticClient.indices.create({ index: this.tableName });
+  };
+
+  postDocument = async (data: T): Promise<any> => {
+    await elasticClient.index({
+      index: this.tableName,
+      body: data,
     });
   };
 
-  get = async (key: string): Promise<T | undefined> => {
-    return new Promise<T | undefined>((resolve, reject) => {
-      this.db.get(key, { sync: true }, (err: Error | undefined, val: rocksdb.Bytes) => {
-        if (err) {
-          if (err.message === "NotFound: ") return resolve(undefined);
-          console.error("RocksDbProvider.get.error", err.message, err.message === "NotFound: ");
-          return reject(err);
-        }
-
-        if (val) return resolve(JSON.parse(val.toString("utf8")));
-        else return reject();
-      });
+  deleteDocument = async (id: string): Promise<any> => {
+    await elasticClient.delete({
+      index: this.tableName,
+      id: id,
     });
   };
 
-  put = async (key: string, value: T): Promise<T> => {
-    return new Promise<T>((resolve, reject) => {
-      this.db.put(key, Buffer.from(JSON.stringify(value)), { sync: true }, (err: Error | undefined) => {
-        if (err) {
-          console.error("RocksDbProvider.put.error", err);
-          return reject(err);
-        }
-        return resolve(value);
-      });
-    });
-  };
-
-  delete = async (key: string): Promise<string> => {
-    return new Promise<string>((resolve, reject) => {
-      this.db.del(key, (err: Error | undefined) => {
-        if (err) {
-          console.error("RocksDbProvider.del.error", err);
-          return reject(err);
-        }
-        return resolve(key);
-      });
-    });
-  };
-
-  getMany = async (options?: RocksDB.IteratorOptions): Promise<{ key: string; val: T }[]> => {
-    return new Promise<{ key: string; val: T }[]>(async (resolve, reject) => {
-      const result: { key: string; val: T }[] = [];
-
-      try {
-        const it: rocksdb.Iterator = this.db.iterator(options);
-
-        const next = () => {
-          it.next((err: Error | undefined, key: rocksdb.Bytes, val: rocksdb.Bytes) => {
-            if (err) {
-              if (err.message === "NotFound: ") return resolve([]);
-              console.error("RocksDbProvider.getMany.iterator.next.error", err);
-              return reject();
-            } else if (key === undefined && val === undefined) {
-              it.end(() => {});
-              return resolve(result);
-            } else {
-              result.push({
-                key: key.toString("utf8"),
-                val: <T>JSON.parse(val.toString("utf8")),
-              });
-              next();
-            }
-          });
-        };
-
-        next();
-      } catch (err) {
-        console.error("RocksDbProvider.getMany.error", err);
-        return reject();
-      }
-    });
-  };
-
-  deleteAll = async (): Promise<void> => {
-    return new Promise<void>(async (resolve, reject) => {
-      const it: rocksdb.Iterator = this.db.iterator();
-
-      try {
-        const next = () => {
-          it.next((err: Error | undefined, key: rocksdb.Bytes, val: rocksdb.Bytes) => {
-            if (err) {
-              if (err.message === "NotFound: ") return resolve();
-              console.error("RocksDbProvider.deleteAll.iterator.next.error", err);
-              return reject();
-            } else if (key === undefined && val === undefined) {
-              it.end(() => {});
-              return resolve();
-            } else {
-              this.db.del(key, (err2: Error | undefined) => {
-                if (err2) {
-                  console.error("RocksDbProvider.deleteAll.del.error", err);
-                  it.end(() => {});
-                  return reject();
-                } else {
-                  next();
-                }
-              });
-            }
-          });
-        };
-
-        next();
-      } catch (err) {
-        console.error("RocksDbProvider.deleteAll.error", err);
-        it.end(() => {});
-        return reject();
-      }
+  getAllDocuments = async (): Promise<any> => {
+    await elasticClient.search({
+      index: this.tableName,
+      query: { match_all: {} },
     });
   };
 }
