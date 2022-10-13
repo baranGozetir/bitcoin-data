@@ -4,35 +4,32 @@ import { BlockBusiness } from "../Business/BlockBusiness";
 const app = express();
 const data = new BlockBusiness();
 
-app.put("/block", async (req: any, res: any) => {
-  const result = await data.put();
+app.post("/block", async (req: any, res: any) => {
+  const result = await data.postDocument();
   res.status(201).send(result);
 });
 
+app.delete("/block/:id", async (req: any, res: any) => {
+  let id = req.params.id;
+  const result = await data.deleteDocument(id);
+  res.send(result);
+});
+
 app.get("/block", async (req: any, res: any) => {
-  const result = await data.getMany();
+  const result = await data.getAllDocuments();
   res.status(200).send(result);
 });
 
-app.get('/block/:id', async (req:any, res:any)=>{
-  let id = req.params.id
-  const result = await data.get(id)
-  res.send(result)
-})
+app.get("/blocksByTxCount", async (req: any, res: any) => {
+  //let id = req.params.id
+  const result = await data.getDocumentsByTxCount();
+  res.send(result);
+});
 
-app.delete('/block/:id', async (req: any, res: any)=>{
-  console.log(req)
-  let id = req.params.id
-  const result = await data.delete(id)
-  res.send(result)
-})
-
-app.delete('/block', async (req:any, res:any)=>{
-  const result = await data.deleteAll()
-  res.send(result)
-  console.log(result)
-})
-
-
+app.get("/getDocumentByBlockHeight:/block_height", async (req: any, res: any) => {
+  let blockHeight = req.params.block_height;
+  const result = await data.getDocumentByBlockHeight(blockHeight);
+  res.send(result);
+});
 
 app.listen(3000, () => console.log(`Example app listening on port 3000!`));
