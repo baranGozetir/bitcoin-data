@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/Controller/BlockController.js",
+    "start": "tsc && node dist/Controller/TransactionController.js",
     "test": "jest"
   },
   "repository": {
