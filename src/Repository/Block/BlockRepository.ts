@@ -9,21 +9,4 @@ export class BlockRepository<Block> extends Repository<Block> implements IBlockR
   constructor(tableName: string) {
     super(tableName);
   }
-
-  //https://coralogix.com/blog/42-elasticsearch-query-examples-hands-on-tutorial/
-  getDocumentByBlockHeight = async (blockHeight: string): Promise<any> => {
-    return await elasticClient.search({
-      index: this.extendedTableName,
-      query: {
-        match: { height: blockHeight },
-      },
-    });
-  };
-
-  getDocumentsByTxCount = async (gte: number, lte: number): Promise<any> => {
-    return await elasticClient.search({
-      index: this.extendedTableName,
-      query: { range: { tx_count: { gte: gte, lte: lte } } },
-    });
-  };
 }

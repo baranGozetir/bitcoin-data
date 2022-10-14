@@ -9,27 +9,34 @@ export class Repository<T> implements IRepository<T> {
   }
 
   createIndice = async (): Promise<any> => {
-    await elasticClient.indices.create({ index: this.tableName });
+    return await elasticClient.indices.create({ index: this.tableName });
   };
 
   postDocument = async (data?: T): Promise<any> => {
-    await elasticClient.index({
+    return await elasticClient.index({
       index: this.tableName,
       body: data,
     });
   };
 
   deleteDocument = async (id: string): Promise<any> => {
-    await elasticClient.delete({
+    return await elasticClient.delete({
       index: this.tableName,
       id: id,
     });
   };
 
   getAllDocuments = async (): Promise<any> => {
-    await elasticClient.search({
+    return await elasticClient.search({
       index: this.tableName,
       query: { match_all: {} },
+    });
+  };
+
+  getFilteredDocuments = async (queryObject: any): Promise<any> => {
+    return await elasticClient.search({
+      index: this.tableName,
+      query: queryObject,
     });
   };
 }

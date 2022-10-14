@@ -3,4 +3,5 @@ export interface IBusiness<T> {
   postDocument: (data: T) => Promise<any>;
   deleteDocument: (id: string) => Promise<any>;
   getAllDocuments: () => Promise<any>;
+  getFilteredDocuments: (queryObject: any) => Promise<any>;
 }

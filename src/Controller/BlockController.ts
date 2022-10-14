@@ -20,16 +20,10 @@ app.get("/block", async (req: any, res: any) => {
   res.status(200).send(result);
 });
 
-app.get("/block/txCount", async (req: any, res: any) => {
-  const gte = req.query.gte;
-  const lte = req.query.lte;
-  const result = await data.getDocumentsByTxCount(gte, lte);
-  res.send(result);
-});
+app.get("/block/filteredBlocks", async (req: any, res: any) => {
+  console.log("req query", req.query);
 
-app.get("/block/blockHeight", async (req: any, res: any) => {
-  const blockHeight = req.query.block_height;
-  const result = await data.getDocumentByBlockHeight(blockHeight);
+  const result = await data.getFilteredDocuments(req.query);
   res.send(result);
 });
 

@@ -16,4 +16,6 @@ export class Business<T> implements IBusiness<T> {
   deleteDocument = async (param: string): Promise<any> => await this.instance.deleteDocument(param);
 
   getAllDocuments = async (): Promise<any> => await this.instance.getAllDocuments();
+
+  getFilteredDocuments = async (queryObject: any): Promise<any> => this.instance.getFilteredDocuments(queryObject);
 }
