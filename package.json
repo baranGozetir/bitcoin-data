@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/Controller/BlockController.js",
+    "start": "tsc && node dist/Controller/TxController.js",
     "test": "jest"
   },
   "repository": {
@@ -12,7 +12,7 @@
     "url": "git+https://github.com/baranGozetir/bitcoin-data.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/baranGozetir/bitcoin-data/issues"
   },
