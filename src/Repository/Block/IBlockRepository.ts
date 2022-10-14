@@ -2,6 +2,6 @@ import { Block } from "../../Entity/Block";
 import { IRepository } from "../IRepository";
 
 export interface IBlockRepository extends IRepository<Block> {
-  getDocumentByBlockHeight: (param: string) => Promise<any>;
-  getDocumentsByTxCount: () => Promise<any>;
+  getDocumentByBlockHeight: (blockHeight: string) => Promise<any>;
+  getDocumentsByTxCount: (gte: number, lte: number) => Promise<any>;
 }

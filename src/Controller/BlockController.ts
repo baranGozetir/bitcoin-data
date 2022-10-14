@@ -9,9 +9,9 @@ app.post("/block", async (req: any, res: any) => {
   res.status(201).send(result);
 });
 
-app.delete("/block/:id", async (req: any, res: any) => {
-  let id = req.params.id;
-  const result = await data.deleteDocument(id);
+app.delete("/block", async (req: any, res: any) => {
+  const block_height = req.query.block_height;
+  const result = await data.deleteDocument(block_height);
   res.send(result);
 });
 
@@ -20,14 +20,15 @@ app.get("/block", async (req: any, res: any) => {
   res.status(200).send(result);
 });
 
-app.get("/blocksByTxCount", async (req: any, res: any) => {
-  //let id = req.params.id
-  const result = await data.getDocumentsByTxCount();
+app.get("/block/txCount", async (req: any, res: any) => {
+  const gte = req.query.gte;
+  const lte = req.query.lte;
+  const result = await data.getDocumentsByTxCount(gte, lte);
   res.send(result);
 });
 
-app.get("/getDocumentByBlockHeight:/block_height", async (req: any, res: any) => {
-  let blockHeight = req.params.block_height;
+app.get("/block/blockHeight", async (req: any, res: any) => {
+  const blockHeight = req.query.block_height;
   const result = await data.getDocumentByBlockHeight(blockHeight);
   res.send(result);
 });

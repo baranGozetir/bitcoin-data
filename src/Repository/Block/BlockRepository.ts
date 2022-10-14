@@ -10,42 +10,45 @@ export class BlockRepository implements IBlockRepository {
   }
 
   createIndice = async (): Promise<any> => {
-    await elasticClient.indices.create({ index: this.tableName });
+    return await elasticClient.indices.create({ index: this.tableName });
   };
 
   postDocument = async (data: Block): Promise<any> => {
-    await elasticClient.index({
+    return await elasticClient.index({
       index: this.tableName,
       body: data,
     });
   };
 
   deleteDocument = async (id: string): Promise<any> => {
-    await elasticClient.delete({
+    console.log(id);
+    return await elasticClient.delete({
       index: this.tableName,
       id: id,
     });
   };
 
   getAllDocuments = async (): Promise<any> => {
-    await elasticClient.search({
+    return await elasticClient.search({
       index: this.tableName,
       query: { match_all: {} },
     });
   };
 
   //https://coralogix.com/blog/42-elasticsearch-query-examples-hands-on-tutorial/
-  getDocumentByBlockHeight = async (param: string): Promise<any> => {
-    await elasticClient.search({
+  getDocumentByBlockHeight = async (blockHeight: string): Promise<any> => {
+    return await elasticClient.search({
       index: this.tableName,
-      query: { fuzzy: { height: param } },
+      query: {
+        match: { height: blockHeight },
+      },
     });
   };
 
-  getDocumentsByTxCount = async (): Promise<any> => {
-    await elasticClient.search({
+  getDocumentsByTxCount = async (gte: number, lte: number): Promise<any> => {
+    return await elasticClient.search({
       index: this.tableName,
-      query: { range: { tx_count: { gte: 5, lte: 10 } } },
+      query: { range: { tx_count: { gte: gte, lte: lte } } },
     });
   };
 }
