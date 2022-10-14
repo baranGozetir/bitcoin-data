@@ -16,7 +16,10 @@ export class BlockBusiness implements IBusiness<BlockDto> {
   put = async () => {
     let blokhash = [];
     let blockData = [];
-    for (let i = 0; i < 5; i++) {
+    // const lastBlockHeight = await axios(
+    //   "https://blockstream.info/testnet/api/blocks/tip/height"
+    // );
+    for (let i = 0; i <= 5; i++) {
       //for (let i = initialBlockHeight; i < lastBlockHeight.data.length; i++)
       const blockHash = await axios.get(
         "https://blockstream.info/testnet/api/block-height/" + i
