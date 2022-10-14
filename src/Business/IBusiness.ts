@@ -1,5 +1,3 @@
-import RocksDB from "rocksdb";
-
 export interface IBusiness<T> {
   createIndice: () => Promise<any>;
   postDocument: (data: T) => Promise<any>;

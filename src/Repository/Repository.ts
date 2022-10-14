@@ -6,14 +6,13 @@ export class Repository<T> implements IRepository<T> {
 
   constructor(tableName: string) {
     this.tableName = tableName;
-    this.createIndice();
   }
 
   createIndice = async (): Promise<any> => {
     await elasticClient.indices.create({ index: this.tableName });
   };
 
-  postDocument = async (data: T): Promise<any> => {
+  postDocument = async (data?: T): Promise<any> => {
     await elasticClient.index({
       index: this.tableName,
       body: data,

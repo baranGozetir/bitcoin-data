@@ -1,5 +1,5 @@
 import express, { Response, Request } from "express";
-import { BlockBusiness } from "../Business/BlockBusiness";
+import { BlockBusiness } from "../Business/Block/BlockBusiness";
 
 const app = express();
 const data = new BlockBusiness();
