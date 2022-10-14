@@ -14,18 +14,29 @@ export class BlockBusiness implements IBusiness<BlockDto> {
   open = async () => await this.result.open();
 
   put = async () => {
-      let blokhash= [];
-      for(let i = 0; i<5; i++){
-        //for (let i = initialBlockHeight; i < lastBlockHeight.data.length; i++)
-        const blockHash = await axios.get('https://blockstream.info/testnet/api/block-height/'+i)
-        blokhash.push(blockHash.data)
-        const blockInfo = await axios.get('https://blockstream.info/testnet/api/block/'+blokhash[i])
-        await this.result.put(blockInfo.data.height, blockInfo.data); 
-      }}
+    let blokhash = [];
+    let blockData = [];
+    for (let i = 0; i < 5; i++) {
+      //for (let i = initialBlockHeight; i < lastBlockHeight.data.length; i++)
+      const blockHash = await axios.get(
+        "https://blockstream.info/testnet/api/block-height/" + i
+      );
+      blokhash.push(blockHash.data);
+      const blockInfo = await axios.get(
+        "https://blockstream.info/testnet/api/block/" + blokhash[i]
+      );
+
+      blockData.push(
+        await this.result.put(blockInfo.data.height, blockInfo.data)
+      );
+    }
+    return blockData;
+  };
 
   get = async (key: string) => this.result.get(key);
 
-  getMany = async (options?: RocksDB.IteratorOptions) => await this.result.getMany(options);
+  getMany = async (options?: RocksDB.IteratorOptions) =>
+    await this.result.getMany(options);
 
   delete = async (key: string) => this.result.delete(key);
 
