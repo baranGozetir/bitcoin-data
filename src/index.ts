@@ -6,5 +6,6 @@ app.get("/", (req: any, res: any) => {
 });
 
 app.use("/block", require("./Controller/BlockController"));
+app.use("/tx", require("./Controller/TxController"));
 
 app.listen(3000, () => console.log("server running"));
