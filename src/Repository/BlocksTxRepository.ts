@@ -4,6 +4,6 @@ import { Repository } from "./Repository";
 
 export class BlocksTxRepository extends Repository<BlocksTx> {
   constructor() {
-    super(rocksdb("src/BlockTx"));
+    super(rocksdb("src/data/BlockTx"));
   }
 }
