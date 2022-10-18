@@ -13,15 +13,15 @@ export class TxBusiness implements IBusiness<TxDto> {
 
   open = async () => await this.result.open();
 
-  put = async () => {
-    let txData = [];
-    const txInfo = await axios(
-      "https://blockstream.info/testnet/api//tx/34ce3a0137fa5677caacaae9347e9c94020d8511dda5b0bebac7b87a01a9a51a"
-    );
-    txData.push(await this.result.put(txInfo.data, txInfo.data));
-    return txData;
-  };
-
+  // put = async () => {
+  //   let txData = [];
+  //   const txInfo = await axios(
+  //     "https://blockstream.info/testnet/api//tx/34ce3a0137fa5677caacaae9347e9c94020d8511dda5b0bebac7b87a01a9a51a"
+  //   );
+  //   txData.push(await this.result.put(txInfo.data, txInfo.data));
+  //   return txData;
+  // };
+  put = async (key: any, value: any) => this.result.put(key, value);
   get = async (key: string) => this.result.get(key);
 
   getMany = async (options?: RocksDB.IteratorOptions) =>

@@ -4,14 +4,15 @@ import { BlockBusiness } from "../Business/BlockBusiness";
 const block = express.Router();
 const data = new BlockBusiness();
 
-block.put("/", async (req: any, res: any) => {
-  const result = await data.put();
-  res.status(201).send(result);
-});
+// block.put("/", async (req: any, res: any) => {
+//   const result = await data.put();
+//   res.status(201).send(result);
+// });
 
 block.get("/", async (req: any, res: any) => {
   const result = await data.getMany();
   res.status(200).send(result);
+  console.log(result);
 });
 
 block.get("/:id", async (req: any, res: any) => {
@@ -33,4 +34,4 @@ block.delete("/", async (req: any, res: any) => {
   console.log(result);
 });
 
-module.exports = block;
+export default block;
