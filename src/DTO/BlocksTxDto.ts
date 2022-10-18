@@ -1,3 +1,3 @@
 export type BlocksTxDto = {
-  txIds: string;
+  //txIds: string;
 };
