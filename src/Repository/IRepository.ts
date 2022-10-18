@@ -5,6 +5,8 @@ export interface IRepository<T> {
   get: (key: string) => Promise<T | undefined>;
   put: (key: string, value: T) => Promise<T>;
   delete: (key: string) => Promise<string>;
-  getMany: (options?: RocksDB.IteratorOptions) => Promise<{ key: string; val: T }[]>;
+  getMany: (
+    options?: RocksDB.IteratorOptions
+  ) => Promise<{ key: string; val: T }[]>;
   deleteAll: () => Promise<void>;
 }
