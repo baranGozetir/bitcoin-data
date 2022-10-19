@@ -12,15 +12,16 @@ export class BlockBusiness implements IBusiness<BlockDto> {
   }
 
   fetchBlock = async (i = 0): Promise<any> => {
-    if (i > 5) {
+    if (i > 6) {
       return console.log("too much data");
     } else {
-      const blockhash = [];
       const blockHash = await axios(
         "https://blockstream.info/testnet/api/block-height/" + i
       );
-      blockhash.push(await this.result.put(blockHash.data, blockHash.data));
-
+      const blockData = await axios(
+        "https://blockstream.info/testnet/api/block/" + blockHash.data
+      );
+      await this.result.put(blockData.data.height, blockData.data);
       return this.fetchBlock(i + 1);
     }
   };
