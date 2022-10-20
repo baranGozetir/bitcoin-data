@@ -1,61 +1,72 @@
 import axios from "axios";
 import RocksDB from "rocksdb";
+import cron from "node-cron";
 import { BlockDto } from "../DTO/BlockDto";
 import { BlockRepository } from "../Repository/BlockRepository";
 import { IBusiness } from "./IBusiness";
+import { keyIn } from "readline-sync";
 
 export class BlockBusiness implements IBusiness<BlockDto> {
   result = new BlockRepository();
   constructor() {
-    this.open();
-    this.fetchBlock();
+    this.open().then(() => {
+      this.fetchBlock();
+    });
   }
+  // databasela haberlesmemi sagliyo.
+  open = async () => this.result.open();
 
-  fetchBlock = async (i = 0): Promise<any> => {
-    if (i > 6) {
-      return console.log("too much data");
-    } else {
+  // database key value olarak kaydetmemi sagliyo
+  put = async (key: any, value: any) => this.result.put(key, value);
+
+  // databasede belli bir key oldugu zaman onu cekmemi sagliyo.
+  get = async (key: string) => this.result.get(key);
+
+  // databasedeki butun datalari cekmemi sagliyo
+  getMany = async (options?: RocksDB.IteratorOptions) =>
+    this.result.getMany(options);
+
+  // databasede belli bir key degerine gore datayi silmemi sagliyo.
+  delete = async (key: string) => this.result.delete(key);
+
+  // tum tabloyu ucuruyo
+  deleteAll = async () => this.result.deleteAll();
+
+  fetchBlock = async () => {
+    const allData = await this.getMany();
+    allData.sort((a, b) => a.val.height - b.val.height);
+
+    if (allData.length === 0) {
       const blockHash = await axios(
-        "https://blockstream.info/testnet/api/block-height/" + i
+        "https://blockstream.info/testnet/api/block-height/" + 0
       );
       const blockData = await axios(
         "https://blockstream.info/testnet/api/block/" + blockHash.data
       );
-      await this.result.put(blockData.data.height, blockData.data);
-      return this.fetchBlock(i + 1);
+      let key = blockHash.data;
+      let data = blockData.data;
+
+      await this.result.put(key, data);
+    } else {
+      const lastData = await this.get(allData[allData.length - 1].key);
+      if (lastData) {
+        const blockHash = await axios(
+          "https://blockstream.info/testnet/api/block-height/" +
+            (lastData.height + 1)
+        );
+
+        const blockData = await axios(
+          "https://blockstream.info/testnet/api/block/" + blockHash.data
+        );
+        let key = blockHash.data;
+        let data = blockData.data;
+        await this.result.put(key, data);
+      } else {
+        console.log("there is no last data information");
+      }
     }
+    console.log("111", allData);
+
+    //this.fetchBlock();
   };
-
-  open = async () => await this.result.open();
-
-  // put = async () => {
-  //   let blokhash = [];
-  //   let blockData = [];
-
-  //   for (let i = 0; i <= 5; i++) {
-  //     const blockHash = await axios.get(
-  //       "https://blockstream.info/testnet/api/block-height/" + i
-  //     );
-  //     blokhash.push(blockHash.data);
-  //     const blockInfo = await axios.get(
-  //       "https://blockstream.info/testnet/api/block/" + blokhash[i]
-  //     );
-
-  //     blockData.push(
-  //       await this.result.put(blockInfo.data.height, blockInfo.data)
-  //     );
-  //   }
-  //   return blockData;
-  // };
-
-  put = async (key: any, value: any) => this.result.put(key, value);
-
-  get = async (key: string) => this.result.get(key);
-
-  getMany = async (options?: RocksDB.IteratorOptions) =>
-    await this.result.getMany(options);
-
-  delete = async (key: string) => this.result.delete(key);
-
-  deleteAll = async () => this.result.deleteAll();
 }
