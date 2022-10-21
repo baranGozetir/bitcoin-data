@@ -8,20 +8,14 @@ export class TxBusiness implements IBusiness<TxDto> {
   result = new TxRepository();
 
   constructor() {
-    this.open();
+    this.open().then(() => {
+      this.getTx();
+    });
   }
-
   open = async () => await this.result.open();
 
-  // put = async () => {
-  //   let txData = [];
-  //   const txInfo = await axios(
-  //     "https://blockstream.info/testnet/api//tx/34ce3a0137fa5677caacaae9347e9c94020d8511dda5b0bebac7b87a01a9a51a"
-  //   );
-  //   txData.push(await this.result.put(txInfo.data, txInfo.data));
-  //   return txData;
-  // };
   put = async (key: any, value: any) => this.result.put(key, value);
+
   get = async (key: string) => this.result.get(key);
 
   getMany = async (options?: RocksDB.IteratorOptions) =>
@@ -30,4 +24,54 @@ export class TxBusiness implements IBusiness<TxDto> {
   delete = async (key: string) => this.result.delete(key);
 
   deleteAll = async () => this.result.deleteAll();
+
+  getTx = async () => {
+    const allTxData = await this.getMany();
+    console.log("txxler", allTxData[allTxData.length - 1]);
+
+    if (allTxData.length === 0) {
+      const blockHash = await axios(
+        "https://blockstream.info/testnet/api/block-height/" + 0
+      );
+      const blocksTxsId = await axios(
+        "https://blockstream.info/testnet/api/block/" +
+          blockHash.data +
+          "/txids"
+      );
+      blocksTxsId.data.forEach(async (element: string) => {
+        const TxInfo = await axios(
+          " https://blockstream.info/testnet/api/tx/" + element
+        );
+        let key = blocksTxsId.data;
+        let data = TxInfo.data;
+        await this.result.put(key, data);
+      });
+    } else {
+      const lastTxData = await this.get(allTxData[allTxData.length - 1].key);
+      if (lastTxData) {
+        const lastBlockStatus1 = JSON.stringify(lastTxData.status);
+        const lastBlockStatus2 = JSON.parse(lastBlockStatus1);
+        const lastBlockHeight = lastBlockStatus2.block_height;
+        const blockHash = await axios(
+          "https://blockstream.info/testnet/api/block-height/" +
+            (lastBlockHeight + 1)
+        );
+        const blocksTxsId = await axios(
+          "https://blockstream.info/testnet/api/block/" +
+            blockHash.data +
+            "/txids"
+        );
+        blocksTxsId.data.forEach(async (element: string) => {
+          const TxInfo = await axios(
+            " https://blockstream.info/testnet/api/tx/" + element
+          );
+          let key = blocksTxsId.data;
+          let data = TxInfo.data;
+          await this.result.put(key, data);
+        });
+      } else {
+        ("there is no data");
+      }
+    }
+  };
 }
