@@ -27,6 +27,9 @@ export class TxBusiness implements IBusiness<TxDto> {
 
   getTx = async () => {
     const allTxData = await this.getMany();
+    allTxData.sort(
+      (a, b) => a.val.status.block_height - b.val.status.block_height
+    );
     console.log("txxler", allTxData[allTxData.length - 1]);
 
     if (allTxData.length === 0) {
@@ -49,9 +52,7 @@ export class TxBusiness implements IBusiness<TxDto> {
     } else {
       const lastTxData = await this.get(allTxData[allTxData.length - 1].key);
       if (lastTxData) {
-        const lastBlockStatus1 = JSON.stringify(lastTxData.status);
-        const lastBlockStatus2 = JSON.parse(lastBlockStatus1);
-        const lastBlockHeight = lastBlockStatus2.block_height;
+        const lastBlockHeight = lastTxData.status.block_height;
         const blockHash = await axios(
           "https://blockstream.info/testnet/api/block-height/" +
             (lastBlockHeight + 1)
