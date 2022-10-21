@@ -7,5 +7,10 @@ export type Tx = {
   size: number;
   weight: number;
   fee: number;
-  status: {};
+  status: {
+    confirmed: boolean;
+    block_height: number;
+    block_hash: string;
+    block_time: number;
+  };
 };
