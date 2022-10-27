@@ -8,7 +8,9 @@ import { keyIn } from "readline-sync";
 
 export class BlockBusiness implements IBusiness<BlockDto> {
   result = new BlockRepository();
-  constructor() {}
+  constructor() {
+    this.open();
+  }
 
   // databasela haberlesmemi sagliyo.
   open = async () => this.result.open();
