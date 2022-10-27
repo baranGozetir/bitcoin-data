@@ -4,10 +4,12 @@ import { TxBusiness } from "../Business/TxBusiness";
 const tx = express.Router();
 const data = new TxBusiness();
 
-// tx.put("/", async (req: any, res: any) => {
-//   const result = await data.put();
-//   res.status(201).send(result);
-// });
+tx.put("/", async (req: any, res: any) => {
+  const key = req.body.key;
+  const value = req.body.value;
+  const result = await data.put(key, value);
+  res.status(201).send(result);
+});
 
 tx.get("/", async (req: any, res: any) => {
   console.log("111", req.params);
