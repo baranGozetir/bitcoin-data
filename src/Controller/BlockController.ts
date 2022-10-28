@@ -13,17 +13,20 @@ block.put("/", async (req: any, res: any) => {
 
 block.get("/", async (req: any, res: any) => {
   const result = await data.getMany();
+  console.log(result);
   res.send(
-    result.find((element) => element.val.height == req.query.height) ||
-      result.find((element) => element.key == req.query.hash) ||
-      result.find((element) => element.val.timestamp == req.query.timestamp) ||
-      result.find((element) => element.val.version == req.query.version) ||
-      result.find((element) => element.val.size == req.query.size) ||
-      result.find((element) => element.val.tx_count == req.query.tx_count) ||
-      result.find(
+    result.filter((element) => element.val.height == req.query.height) &&
+      result.filter((element) => element.key == req.query.hash) &&
+      result.filter(
+        (element) => element.val.timestamp == req.query.timestamp
+      ) &&
+      result.filter((element) => element.val.version == req.query.version) &&
+      result.filter((element) => element.val.size == req.query.size) &&
+      result.filter((element) => element.val.tx_count == req.query.tx_count) &&
+      result.filter(
         (element) => element.val.difficulty == req.query.difficulty
-      ) ||
-      result.find((element) => element.val.id == req.query.id)
+      ) &&
+      result.filter((element) => element.val.id == req.query.id)
   );
 });
 
