@@ -10,9 +10,13 @@ export class BlockAndTransaction {
   constructor() {
     this.blockInstance = new BlockBusiness();
     this.txInstance = new TxBusiness();
-    this.openData().then(() => {
-      this.blockAndTransactionSave();
-    });
+    this.openData()
+      .then(() => {
+        this.blockAndTransactionSave();
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   }
   openData = async () => {
     await this.blockInstance.open();
@@ -22,11 +26,11 @@ export class BlockAndTransaction {
     const allBlockData = await this.blockInstance.getMany();
     const allTxData = await this.txInstance.getMany();
     console.log("blockdata", allBlockData);
-    console.log("txdata", allTxData);
+    //console.log("txdata", allTxData);
 
     if (allBlockData.length === 0) {
       const blockHash = await axios(
-        "https://blockstream.info/testnet/api/block-height/" + 2378134
+        "https://blockstream.info/testnet/api/block-height/" + 2378400
       );
 
       const blockData = await axios(
